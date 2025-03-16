@@ -66,8 +66,12 @@ const getProfile = async (req, res, next) => {
 // Controller to search for doctors based on filters
 const searchDoctors = async (req, res, next) => {
     try {
-        // Extract filters from the query string
-        const { specialty, city, state, name } = req.query;
+        // Extract filters from both query string and request body
+        const filters = { ...req.query, ...req.body };
+        const { specialty, city, state, name } = filters;
+        
+        console.log('Search filters:', filters); // Log for debugging
+        
         // Build a query object based on the filters provided
         let query = {};
         if (specialty) {
@@ -79,14 +83,23 @@ const searchDoctors = async (req, res, next) => {
         if (state) {
             query['location.state'] = { $regex: state, $options: 'i' };
         }
+        
         // Find matching doctor profiles and also populate the linked User document (to get the doctor's name)
         let profiles = await DoctorProfile.find(query).populate('user', 'name email');
+        
         // Filter by doctor's name if provided
         if (name) {
-            profiles = profiles.filter(profile => profile.user.name.toLowerCase().includes(name.toLowerCase()));
+            profiles = profiles.filter(profile => 
+                profile.user && profile.user.name && 
+                profile.user.name.toLowerCase().includes(name.toLowerCase())
+            );
         }
+        
+        console.log(`Found ${profiles.length} matching doctors`); // Log for debugging
+        
         res.json(profiles);
     } catch (error) {
+        console.error('Doctor search error:', error);
         next(error);
     }
 };

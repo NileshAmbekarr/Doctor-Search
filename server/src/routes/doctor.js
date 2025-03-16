@@ -11,5 +11,7 @@ router.get('/profile', authMiddleware, getProfile);
 
 // Route for patients to search for doctors using filters
 router.get('/search', searchDoctors);
+// Also allow POST requests for search to support sending filters in the request body
+router.post('/search', searchDoctors);
 
 module.exports = router;
