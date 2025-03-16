@@ -18,40 +18,46 @@ const DoctorProfile = () => {
   const fetchDoctorProfile = async (doctorId) => {
     try {
       setLoading(true);
-      try {
-        const data = await doctorService.getProfile(doctorId);
-        setDoctor(data);
-      } catch (apiError) {
-        console.error('API Error:', apiError);
-        // Mock data for testing
-        setDoctor({
-          id: doctorId,
-          name: 'Dr. John Smith',
-          specialty: 'Cardiologist',
-          location: 'New York',
-          rating: 4.8,
-          experience: 15,
-          about: 'Dr. Smith is a board-certified cardiologist with over 15 years of experience in treating heart conditions.',
-          education: ['MD from Harvard Medical School', 'Residency at Mayo Clinic'],
-          phone: '(123) 456-7890',
-          email: 'john.smith@example.com',
-          imageUrl: 'https://via.placeholder.com/128',
-          availableSlots: [
-            {
-              date: '2023-06-15',
-              times: ['09:00 AM', '10:00 AM', '11:00 AM']
-            },
-            {
-              date: '2023-06-16',
-              times: ['02:00 PM', '03:00 PM', '04:00 PM']
-            }
-          ]
-        });
-      }
       setError('');
+      
+      console.log('Fetching doctor profile for ID:', doctorId);
+      
+      const data = await doctorService.getProfile(doctorId);
+      console.log('API Response:', data);
+      
+      // Transform the API response to match the expected format
+      const formattedDoctor = {
+        id: data._id,
+        name: data.user ? data.user.name : 'Unknown Doctor',
+        email: data.user ? data.user.email : 'Email not available',
+        specialty: data.specialty || 'Specialty not specified',
+        location: data.location ? `${data.location.city}, ${data.location.state}` : 'Location not specified',
+        experience: data.experience || 0,
+        // Add default values for fields that might not be in the API response
+        rating: data.rating || 4.5, // Default rating
+        about: data.about || `${data.specialty} with ${data.experience} years of experience.`,
+        education: data.education || ['Medical Degree'],
+        phone: data.phone || 'Phone not available',
+        imageUrl: data.imageUrl || 'https://via.placeholder.com/128',
+        // Transform availability to the expected format
+        availableSlots: data.availability ? data.availability.map(slot => {
+          // Format date as YYYY-MM-DD for form inputs
+          const date = new Date(slot.date);
+          const formattedDate = date.toISOString().split('T')[0]; // Gets YYYY-MM-DD format
+          
+          return {
+            date: formattedDate,
+            displayDate: date.toLocaleDateString(), // For display purposes
+            times: slot.timeSlots || []
+          };
+        }) : []
+      };
+      
+      setDoctor(formattedDoctor);
     } catch (err) {
       console.error('Error fetching doctor profile:', err);
       setError('Failed to load doctor profile. Please try again later.');
+      setDoctor(null);
     } finally {
       setLoading(false);
     }
@@ -172,7 +178,7 @@ const DoctorProfile = () => {
                     <div key={index} className="bg-white rounded-md p-4 shadow-sm">
                       <div className="flex items-center mb-2">
                         <Calendar className="h-5 w-5 text-blue-600 mr-2" />
-                        <span className="font-medium">{slot.date}</span>
+                        <span className="font-medium">{slot.displayDate}</span>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         {slot.times && slot.times.map((time, timeIndex) => (

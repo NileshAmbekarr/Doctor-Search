@@ -18,12 +18,16 @@ export const AuthProvider = ({ children }) => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
+          console.log('Token found, fetching current user');
           const userData = await authService.getCurrentUser();
+          console.log('Current user data:', userData);
           setUser(userData);
         }
       } catch (err) {
         console.error('Failed to get current user:', err);
+        // Clear token if it's invalid
         localStorage.removeItem('token');
+        setError('Session expired. Please login again.');
       } finally {
         setLoading(false);
       }
@@ -36,12 +40,20 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setError(null);
+      console.log('Logging in with credentials:', credentials);
       const data = await authService.login(credentials);
-      localStorage.setItem('token', data.token);
-      setUser(data.user);
-      return data.user;
+      console.log('Login response:', data);
+      
+      if (data.token && data.user) {
+        localStorage.setItem('token', data.token);
+        setUser(data.user);
+        return data.user;
+      } else {
+        throw new Error('Invalid response from server');
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      console.error('Login error:', err);
+      setError(err.response?.data?.message || err.message || 'Login failed');
       throw err;
     }
   };

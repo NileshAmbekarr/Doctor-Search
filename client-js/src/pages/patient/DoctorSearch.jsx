@@ -31,35 +31,20 @@ const DoctorSearch = () => {
   const searchDoctors = async () => {
     try {
       setLoading(true);
-      // For testing purposes, use mock data if the API call fails
-      try {
-        const data = await doctorService.search(filters);
-        setDoctors(data || []);
-      } catch (apiError) {
-        console.error('API Error:', apiError);
-        // Mock data for testing
-        setDoctors([
-          {
-            id: '1',
-            name: 'Dr. John Smith',
-            specialty: 'Cardiologist',
-            location: 'New York',
-            rating: 4.8,
-            experience: 15,
-            imageUrl: 'https://via.placeholder.com/80'
-          },
-          {
-            id: '2',
-            name: 'Dr. Sarah Johnson',
-            specialty: 'Dermatologist',
-            location: 'Los Angeles',
-            rating: 4.7,
-            experience: 10,
-            imageUrl: 'https://via.placeholder.com/80'
-          }
-        ]);
-      }
       setError('');
+      
+      console.log('Searching with filters:', filters);
+      
+      const data = await doctorService.search(filters);
+      console.log('API response:', data);
+      
+      if (Array.isArray(data)) {
+        setDoctors(data);
+      } else {
+        console.error('Unexpected API response format:', data);
+        setDoctors([]);
+        setError('Received unexpected data format from server');
+      }
     } catch (err) {
       console.error('Error fetching doctors:', err);
       setError('Failed to load doctors. Please try again later.');
@@ -187,24 +172,28 @@ const DoctorSearch = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {doctors.map((doctor, index) => (
                 <Link
-                  key={doctor.id || `doctor-${index}`}
-                  to={`/patient/doctor/${doctor.id || 'unknown'}`}
+                  key={doctor._id || `doctor-${index}`}
+                  to={`/patient/doctor/${doctor._id || 'unknown'}`}
                   className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300"
                 >
                   <div className="flex items-start">
                     <img
                       src={doctor.imageUrl || 'https://via.placeholder.com/80'}
-                      alt={doctor.name || 'Doctor'}
+                      alt={(doctor.user && doctor.user.name) || 'Doctor'}
                       className="w-20 h-20 rounded-full object-cover"
                     />
                     <div className="ml-4">
                       <h3 className="text-xl font-semibold text-gray-900">
-                        {doctor.name || 'Unknown Doctor'}
+                        {(doctor.user && doctor.user.name) || 'Unknown Doctor'}
                       </h3>
                       <p className="text-gray-600">{doctor.specialty || 'Specialty not specified'}</p>
                       <div className="flex items-center mt-2">
                         <MapPin className="h-4 w-4 text-gray-400 mr-1" />
-                        <span className="text-gray-600 text-sm">{doctor.location || 'Location not specified'}</span>
+                        <span className="text-gray-600 text-sm">
+                          {doctor.location && doctor.location.city ? 
+                            `${doctor.location.city}${doctor.location.state ? `, ${doctor.location.state}` : ''}` : 
+                            'Location not specified'}
+                        </span>
                       </div>
                       <div className="flex items-center mt-2">
                         <Star className="h-4 w-4 text-yellow-400 mr-1" />

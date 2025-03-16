@@ -26,7 +26,9 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      console.log('Submitting login form with data:', formData);
       const user = await login(formData);
+      console.log('Login successful, user:', user);
       
       // Redirect based on user role
       if (user.role === 'doctor') {
@@ -35,7 +37,8 @@ const Login = () => {
         navigate('/patient/dashboard');
       }
     } catch (err) {
-      setFormError(err.response?.data?.error || 'Login failed. Please check your credentials.');
+      console.error('Login error in component:', err);
+      setFormError(err.response?.data?.message || err.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }

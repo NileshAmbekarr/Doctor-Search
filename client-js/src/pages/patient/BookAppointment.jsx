@@ -24,9 +24,22 @@ const BookAppointment = () => {
     const timeParam = params.get('time');
     
     if (dateParam && timeParam) {
+      // Ensure the date is in the correct format (YYYY-MM-DD)
+      let formattedDate = dateParam;
+      
+      // If the date is not in YYYY-MM-DD format, try to convert it
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+        try {
+          const date = new Date(dateParam);
+          formattedDate = date.toISOString().split('T')[0];
+        } catch (error) {
+          console.error('Error formatting date:', error);
+        }
+      }
+      
       setBookingData(prev => ({
         ...prev,
-        date: dateParam,
+        date: formattedDate,
         time: timeParam,
       }));
     }
@@ -42,8 +55,40 @@ const BookAppointment = () => {
   const fetchDoctorProfile = async (id) => {
     try {
       setLoading(true);
+      console.log('Fetching doctor profile for booking, ID:', id);
+      
       const data = await doctorService.getProfile(id);
-      setDoctor(data);
+      console.log('API Response for booking:', data);
+      
+      // Transform the API response to match the expected format
+      const formattedDoctor = {
+        id: data._id,
+        name: data.user ? data.user.name : 'Unknown Doctor',
+        email: data.user ? data.user.email : 'Email not available',
+        specialty: data.specialty || 'Specialty not specified',
+        location: data.location ? `${data.location.city}, ${data.location.state}` : 'Location not specified',
+        experience: data.experience || 0,
+        // Add default values for fields that might not be in the API response
+        rating: data.rating || 4.5, // Default rating
+        about: data.about || `${data.specialty} with ${data.experience} years of experience.`,
+        education: data.education || ['Medical Degree'],
+        phone: data.phone || 'Phone not available',
+        imageUrl: data.imageUrl || 'https://via.placeholder.com/128',
+        // Transform availability to the expected format
+        availableSlots: data.availability ? data.availability.map(slot => {
+          // Format date as YYYY-MM-DD for form inputs
+          const date = new Date(slot.date);
+          const formattedDate = date.toISOString().split('T')[0]; // Gets YYYY-MM-DD format
+          
+          return {
+            date: formattedDate,
+            displayDate: date.toLocaleDateString(), // For display purposes
+            times: slot.timeSlots || []
+          };
+        }) : []
+      };
+      
+      setDoctor(formattedDoctor);
       setError('');
     } catch (err) {
       console.error('Error fetching doctor profile:', err);
@@ -124,7 +169,7 @@ const BookAppointment = () => {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Appointment Booked Successfully!</h2>
           <p className="text-gray-600 mb-6">
-            Your appointment with Dr. {doctor?.name} on {bookingData.date} at {bookingData.time} has been confirmed.
+            Your appointment with Dr. {doctor?.name} on {new Date(bookingData.date).toLocaleDateString()} at {bookingData.time} has been confirmed.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
@@ -254,7 +299,7 @@ const BookAppointment = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-700">Date</p>
                     <p className="text-sm text-gray-600">
-                      {bookingData.date || 'Not selected'}
+                      {bookingData.date ? new Date(bookingData.date).toLocaleDateString() : 'Not selected'}
                     </p>
                   </div>
                 </div>
