@@ -104,4 +104,37 @@ const searchDoctors = async (req, res, next) => {
     }
 };
 
-module.exports = { createOrUpdateProfile, getProfile, searchDoctors };
+// Controller to get a doctor's profile by ID (for patients to view)
+const getDoctorProfileById = async (req, res, next) => {
+    try {
+        const doctorId = req.params.id;
+        if (!doctorId) {
+            return res.status(400).json({ message: 'Doctor ID is required' });
+        }
+
+        // Find the doctor profile by ID and populate the user information
+        const profile = await DoctorProfile.findById(doctorId).populate('user', 'name email');
+        
+        if (!profile) {
+            return res.status(404).json({ message: 'Doctor profile not found' });
+        }
+
+        // Format the response to include user details
+        const doctorData = {
+            _id: profile._id,
+            specialty: profile.specialty,
+            experience: profile.experience,
+            location: profile.location,
+            availability: profile.availability,
+            user: profile.user,
+            // Add any additional fields you want to include
+        };
+
+        res.json(doctorData);
+    } catch (error) {
+        console.error('Error fetching doctor profile by ID:', error);
+        next(error);
+    }
+};
+
+module.exports = { createOrUpdateProfile, getProfile, searchDoctors, getDoctorProfileById };

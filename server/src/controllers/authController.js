@@ -1,4 +1,3 @@
-
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -59,10 +58,43 @@ const login = async (req, res, next) => {
         const payload = { id: user._id, role: user.role };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.json({ token });
+        // Return token and user information
+        res.json({ 
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
     } catch (error) {
         next(error);
     }
 };
 
-module.exports = { register, login };
+const getCurrentUser = async (req, res, next) => {
+    try {
+        // req.user is set by the auth middleware
+        const userId = req.user.id;
+        
+        // Find the user by ID but don't return the password
+        const user = await User.findById(userId).select('-password');
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        // Return user data
+        res.json({
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { register, login, getCurrentUser };
