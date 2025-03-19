@@ -41,7 +41,7 @@ Want to run this amazing project locally? Follow these steps and you'll be match
 
 #### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/doctor-search.git
+git clone https://github.com/nileshambekarr/doctor-search.git
 cd doctor-search
 ```
 
@@ -154,9 +154,9 @@ Found a bug? Want to add a feature? Have a suggestion for making this even more 
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
+<!-- ## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details. -->
 
 ## 🙏 Acknowledgements
 
