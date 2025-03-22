@@ -91,9 +91,16 @@ export const doctorService = {
     return response.data;
   },
   getProfile: async (id) => {
-    console.log(`Fetching doctor profile with ID: ${id}`);
-    const response = await api.get(`/doctor/${id}`);
-    return response.data;
+    if (id) {
+      console.log(`Fetching doctor profile with ID: ${id}`);
+      const response = await api.get(`/doctor/${id}`);
+      return response.data;
+    } else {
+      // If no ID is provided, get the current doctor's profile
+      console.log('Fetching current doctor profile');
+      const response = await api.get('/doctor/profile');
+      return response.data;
+    }
   },
   updateProfile: async (profileData) => {
     const response = await api.put('/doctor/profile', profileData);
@@ -116,16 +123,16 @@ export const appointmentService = {
     return response.data;
   },
   getPatientAppointments: async () => {
-    const response = await api.get('/appointment/patient');
-    return response.data;
+    const patientAppointmentsResponse = await api.get('/appointment');
+    return patientAppointmentsResponse.data;
   },
   getDoctorAppointments: async () => {
-    const response = await api.get('/appointment/doctor');
-    return response.data;
+    const doctorAppointmentsResponse = await api.get('/appointment');
+    return doctorAppointmentsResponse.data;
   },
   cancelAppointment: async (appointmentId) => {
-    const response = await api.put(`/appointment/${appointmentId}/cancel`);
-    return response.data;
+    const cancelResponse = await api.put(`/appointment/${appointmentId}/cancel`);
+    return cancelResponse.data;
   },
 };
 

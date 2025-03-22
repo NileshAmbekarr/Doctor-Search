@@ -11,6 +11,8 @@ import DoctorSearch from './pages/patient/DoctorSearch';
 import DoctorProfile from './pages/patient/DoctorProfile';
 import BookAppointment from './pages/patient/BookAppointment';
 import PatientDashboard from './pages/patient/Dashboard';
+import DoctorDashboard from './pages/doctor/Dashboard';
+import DoctorProfileManagement from './pages/doctor/Profile';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -35,8 +37,8 @@ function App() {
 
               {/* Doctor Routes */}
               <Route path="/doctor" element={<PrivateRoute role="doctor" />}>
-                <Route path="dashboard" element={<div>Doctor Dashboard</div>} />
-                <Route path="profile" element={<div>Doctor Profile Management</div>} />
+                <Route path="dashboard" element={<DoctorDashboard />} />
+                <Route path="profile" element={<DoctorProfileManagement />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
