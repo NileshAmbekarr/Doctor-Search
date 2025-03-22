@@ -11,10 +11,19 @@ const createOrUpdateProfile = async (req, res, next) => {
             return res.status(403).json({ message: 'Only doctors can create/update profile' });
         }
 
-        const { specialty, experience, location, availability } = req.body;
+        const { 
+            specialty, 
+            experience, 
+            bio, 
+            education, 
+            consultationFee,
+            availability,
+            location = { city: '', state: '' } // Default empty location if not provided
+        } = req.body;
+        
         // Validate that required fields are provided
-        if (!specialty || !experience || !location || !location.city || !location.state) {
-            return res.status(400).json({ message: 'Please provide all required fields: specialty, experience, city, state.' });
+        if (!specialty || !experience) {
+            return res.status(400).json({ message: 'Please provide all required fields: specialty, experience' });
         }
 
         // Check if the profile already exists for the doctor
@@ -23,9 +32,18 @@ const createOrUpdateProfile = async (req, res, next) => {
             // Update the existing profile
             profile.specialty = specialty;
             profile.experience = experience;
-            profile.location = location;
-            // Update availability only if new data is provided; else, keep existing slots
+            profile.bio = bio || profile.bio;
+            profile.education = education || profile.education;
+            profile.consultationFee = consultationFee || profile.consultationFee;
+            
+            // Only update the location if it's provided and valid
+            if (location && location.city && location.state) {
+                profile.location = location;
+            }
+            
+            // Update availability only if new data is provided; else, keep existing
             profile.availability = availability || profile.availability;
+            
             await profile.save();
             return res.json({ message: 'Profile updated successfully', profile });
         } else {
@@ -34,13 +52,17 @@ const createOrUpdateProfile = async (req, res, next) => {
                 user: userId,
                 specialty,
                 experience,
+                bio,
+                education,
+                consultationFee,
                 location,
-                availability: availability || []
+                availability: availability || {}
             });
             await profile.save();
             return res.status(201).json({ message: 'Profile created successfully', profile });
         }
     } catch (error) {
+        console.error('Error creating/updating profile:', error);
         next(error);
     }
 };

@@ -14,17 +14,55 @@ const doctorProfileSchema = new Schema({
     specialty: { type: String, required: true },
     // Years of experience
     experience: { type: Number, required: true },
+    // Doctor's professional bio
+    bio: { type: String },
+    // Doctor's education and qualifications
+    education: { type: String },
+    // Consultation fee
+    consultationFee: { type: Number },
     // Location information stored as a nested object with city and state
     location: {
-        city: { type: String, required: true },
-        state: { type: String, required: true }
+        city: { type: String },
+        state: { type: String }
     },
-    // Availability slots: an array of objects representing date and time slots
-    availability: [{
-        date: { type: Date, required: true },
-        // timeSlots can be a list of strings (e.g., "09:00", "09:30")
-        timeSlots: [{ type: String }]
-    }]
+    // Structured availability by day of week
+    availability: {
+        monday: { 
+            available: { type: Boolean, default: false },
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '17:00' }
+        },
+        tuesday: { 
+            available: { type: Boolean, default: false },
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '17:00' }
+        },
+        wednesday: { 
+            available: { type: Boolean, default: false },
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '17:00' }
+        },
+        thursday: { 
+            available: { type: Boolean, default: false },
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '17:00' }
+        },
+        friday: { 
+            available: { type: Boolean, default: false },
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '17:00' }
+        },
+        saturday: { 
+            available: { type: Boolean, default: false },
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '17:00' }
+        },
+        sunday: { 
+            available: { type: Boolean, default: false },
+            start: { type: String, default: '09:00' },
+            end: { type: String, default: '17:00' }
+        }
+    }
 }, { timestamps: true });
 
 // Export the model so it can be used elsewhere in the app

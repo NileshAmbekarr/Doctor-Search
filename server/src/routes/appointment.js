@@ -7,7 +7,7 @@ const { bookAppointment, cancelAppointment, getAppointments } = require('../cont
 router.post('/', authMiddleware, bookAppointment);
 
 // Endpoint for cancelling an appointment by ID (protected route)
-router.delete('/:id', authMiddleware, cancelAppointment);
+router.put('/:id/cancel', authMiddleware, cancelAppointment);
 
 // Endpoint to fetch appointments for the logged-in user (protected route)
 router.get('/', authMiddleware, getAppointments);

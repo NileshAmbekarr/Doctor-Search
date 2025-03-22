@@ -5,8 +5,22 @@ const jwt = require('jsonwebtoken');
 const register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
-        if (!name || !email || !password || !role) {
-            return res.status(400).json({ message: 'Please provide all required fields.' });
+        
+        // Enhanced validation
+        if (!name || typeof name !== 'string' || name.trim().length < 2) {
+            return res.status(400).json({ message: 'Please provide a valid name (minimum 2 characters).' });
+        }
+        
+        if (!email || typeof email !== 'string' || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            return res.status(400).json({ message: 'Please provide a valid email address.' });
+        }
+        
+        if (!password || typeof password !== 'string' || password.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
+        }
+        
+        if (!role || !['doctor', 'patient'].includes(role)) {
+            return res.status(400).json({ message: 'Role must be either "doctor" or "patient".' });
         }
 
         // Check if user already exists
@@ -38,8 +52,14 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Please provide email and password.' });
+        
+        // Enhanced validation
+        if (!email || typeof email !== 'string' || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            return res.status(400).json({ message: 'Please provide a valid email address.' });
+        }
+        
+        if (!password || typeof password !== 'string') {
+            return res.status(400).json({ message: 'Please provide a valid password.' });
         }
 
         // Find the user

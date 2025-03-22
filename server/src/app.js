@@ -1,4 +1,3 @@
-
 const express = require('express');
 require('dotenv').config(); // Ensure environment variables are loaded
 const cors = require('cors')
@@ -7,6 +6,15 @@ const cors = require('cors')
 const authRoutes = require('./routes/authRoutes'); 
 const doctorRoutes = require('./routes/doctor');
 const appointmentRoutes = require('./routes/appointment');
+
+// Utility function for standardized error handling
+const handleError = (res, error, statusCode = 500) => {
+    console.error('Error:', error);
+    const message = process.env.NODE_ENV === 'production' 
+        ? 'Something went wrong' 
+        : error.message;
+    return res.status(statusCode).json({ error: message });
+};
 
 const app = express();
 
@@ -25,8 +33,7 @@ app.use('/api/appointment', appointmentRoutes)
 
 // Global error handler middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: err.message });
+    handleError(res, err);
 });
 
 module.exports = app;
