@@ -38,7 +38,7 @@ function App() {
               {/* Doctor Routes */}
               <Route path="/doctor" element={<PrivateRoute role="doctor" />}>
                 <Route path="dashboard" element={<DoctorDashboard />} />
-                <Route path="profile" element={<DoctorProfileManagement />} />
+                <Route path="profile" element={<DoctorProfileManagement key="doctor-profile" />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
