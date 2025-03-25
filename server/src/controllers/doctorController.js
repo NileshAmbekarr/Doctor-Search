@@ -146,10 +146,12 @@ const getDoctorProfileById = async (req, res, next) => {
             _id: profile._id,
             specialty: profile.specialty,
             experience: profile.experience,
+            education: profile.education,
+            bio: profile.bio, 
+            consultationFee: profile.consultationFee,
             location: profile.location,
             availability: profile.availability,
             user: profile.user,
-            // Add any additional fields you want to include
         };
 
         res.json(doctorData);

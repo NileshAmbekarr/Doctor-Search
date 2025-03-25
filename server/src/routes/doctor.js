@@ -6,6 +6,9 @@ const authMiddleware = require('../middlewares/auth');
 // Route to create or update a doctor's profile (protected route)
 router.post('/profile', authMiddleware, createOrUpdateProfile);
 
+// Route to update a doctor's profile (protected route)
+router.put('/profile', authMiddleware, createOrUpdateProfile);
+
 // Route for a doctor to fetch their own profile (protected route)
 router.get('/profile', authMiddleware, getProfile);
 
