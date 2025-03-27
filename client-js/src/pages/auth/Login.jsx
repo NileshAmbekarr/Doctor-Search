@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
@@ -11,6 +11,10 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get the redirect path from the location state or use default
+  const from = location.state?.from || '';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,11 +34,16 @@ const Login = () => {
       const user = await login(formData);
       console.log('Login successful, user:', user);
       
-      // Redirect based on user role
-      if (user.role === 'doctor') {
-        navigate('/doctor/dashboard');
+      // If redirected from another page, go back to that page
+      if (from) {
+        navigate(from);
       } else {
-        navigate('/patient/dashboard');
+        // Otherwise redirect based on user role
+        if (user.role === 'doctor') {
+          navigate('/doctor/dashboard');
+        } else {
+          navigate('/patient/dashboard');
+        }
       }
     } catch (err) {
       console.error('Login error in component:', err);
@@ -52,7 +61,7 @@ const Login = () => {
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{' '}
-          <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link to="/register" state={{ from }} className="font-medium text-blue-600 hover:text-blue-500">
             create a new account
           </Link>
         </p>
@@ -63,6 +72,12 @@ const Login = () => {
           {formError && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {formError}
+            </div>
+          )}
+          
+          {from && (
+            <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+              Sign in to continue to {from.replace('/doctor/', 'doctor details ').replace('/book/', 'book appointment ')}
             </div>
           )}
 

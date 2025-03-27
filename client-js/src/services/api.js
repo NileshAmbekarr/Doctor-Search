@@ -119,7 +119,15 @@ export const doctorService = {
 // Appointment service
 export const appointmentService = {
   book: async (appointmentData) => {
-    const response = await api.post('/appointment', appointmentData);
+    // Ensure the data format matches what the server expects
+    const bookingData = {
+      doctorId: appointmentData.doctorId,
+      appointmentDate: appointmentData.appointmentDate,
+      timeSlot: appointmentData.timeSlot,
+      notes: appointmentData.notes // Optional field
+    };
+    
+    const response = await api.post('/appointment', bookingData);
     return response.data;
   },
   getPatientAppointments: async () => {

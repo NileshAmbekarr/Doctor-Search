@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
@@ -13,6 +13,10 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get the redirect path from state or use default paths based on role
+  const from = location.state?.from || '';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,11 +34,16 @@ const Register = () => {
     try {
       const user = await register(formData);
       
-      // Redirect based on user role
-      if (user.role === 'doctor') {
-        navigate('/doctor/profile');
+      // If redirected from another page, go back to that page
+      if (from) {
+        navigate(from);
       } else {
-        navigate('/patient/dashboard');
+        // Otherwise redirect based on user role
+        if (user.role === 'doctor') {
+          navigate('/doctor/profile');
+        } else {
+          navigate('/patient/dashboard');
+        }
       }
     } catch (err) {
       setFormError(err.response?.data?.error || 'Registration failed. Please try again.');
@@ -62,6 +71,12 @@ const Register = () => {
           {formError && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {formError}
+            </div>
+          )}
+          
+          {from && (
+            <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+              Sign up to continue
             </div>
           )}
 

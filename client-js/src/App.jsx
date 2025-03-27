@@ -14,6 +14,8 @@ import PatientDashboard from './pages/patient/Dashboard';
 import DoctorDashboard from './pages/doctor/Dashboard';
 import DoctorProfileManagement from './pages/doctor/Profile';
 import NotFound from './pages/NotFound';
+import PublicDoctorSearch from './pages/public/DoctorSearch';
+import AuthCheck from './components/AuthCheck';
 
 function App() {
   return (
@@ -26,6 +28,10 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              
+              {/* Public Routes */}
+              <Route path="/search" element={<PublicDoctorSearch />} />
+              <Route path="/doctor/:id" element={<AuthCheck><DoctorProfile /></AuthCheck>} />
               
               {/* Patient Routes */}
               <Route path="/patient" element={<PrivateRoute role="patient" />}>

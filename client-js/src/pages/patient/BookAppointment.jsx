@@ -116,6 +116,12 @@ const BookAppointment = () => {
 
     try {
       setLoading(true);
+      console.log("Booking appointment with data:", {
+        doctorId,
+        appointmentDate: bookingData.date,
+        timeSlot: bookingData.time,
+      });
+      
       await appointmentService.book({
         doctorId,
         appointmentDate: bookingData.date,
@@ -127,7 +133,8 @@ const BookAppointment = () => {
       setError('');
     } catch (err) {
       console.error('Error booking appointment:', err);
-      setError(err.response?.data?.error || 'Failed to book appointment. Please try again.');
+      const errorMessage = err.response?.data?.message || err.response?.data?.error || 'Failed to book appointment. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
