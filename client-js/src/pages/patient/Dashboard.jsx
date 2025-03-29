@@ -169,7 +169,7 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {cancelledAppointments.map((appointment) => (
                   <div
-                    key={appointment.id}
+                    key={appointment._id}
                     className="bg-white rounded-lg shadow-md overflow-hidden opacity-75"
                   >
                     <div className="bg-gray-600 text-white p-4">

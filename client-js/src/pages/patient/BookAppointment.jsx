@@ -70,22 +70,42 @@ const BookAppointment = () => {
         experience: data.experience || 0,
         // Add default values for fields that might not be in the API response
         rating: data.rating || 4.5, // Default rating
-        about: data.about || `${data.specialty} with ${data.experience} years of experience.`,
-        education: data.education || ['Medical Degree'],
+        about: data.bio || `${data.specialty} with ${data.experience} years of experience.`,
+        education: data.education ? [data.education] : ['Medical Degree'],
         phone: data.phone || 'Phone not available',
         imageUrl: data.imageUrl || 'https://via.placeholder.com/128',
         // Transform availability to the expected format
-        availableSlots: data.availability ? data.availability.map(slot => {
-          // Format date as YYYY-MM-DD for form inputs
-          const date = new Date(slot.date);
-          const formattedDate = date.toISOString().split('T')[0]; // Gets YYYY-MM-DD format
-          
-          return {
-            date: formattedDate,
-            displayDate: date.toLocaleDateString(), // For display purposes
-            times: slot.timeSlots || []
-          };
-        }) : []
+        availableSlots: data.availability ? Object.entries(data.availability)
+          .filter(([_, day]) => day.available)
+          .map(([day, schedule]) => {
+            // Get the next occurrence of this weekday
+            const today = new Date();
+            const currentDay = today.getDay();
+            const targetDay = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].indexOf(day.toLowerCase());
+            
+            // Calculate days until next occurrence
+            let daysUntilNext = targetDay - currentDay;
+            if (daysUntilNext <= 0) daysUntilNext += 7;
+            
+            // Get the date for this slot
+            const slotDate = new Date(today);
+            slotDate.setDate(today.getDate() + daysUntilNext);
+            
+            // Generate time slots between start and end time
+            const timeSlots = [];
+            const [startHour] = schedule.start.split(':').map(Number);
+            const [endHour] = schedule.end.split(':').map(Number);
+            
+            for (let hour = startHour; hour < endHour; hour++) {
+              timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+            }
+            
+            return {
+              date: slotDate.toISOString().split('T')[0],
+              displayDate: slotDate.toLocaleDateString(),
+              times: timeSlots
+            };
+          }) : []
       };
       
       setDoctor(formattedDoctor);
