@@ -1,6 +1,6 @@
 # 👨‍⚕️ Doctor Search - Find Your Healthcare Hero! 🦸‍♀️
 
-Welcome to Doctor Search - the app that helps you find the perfect doctor faster than you can say "Is this covered by insurance?" 💉
+Welcome to Doctor Search - the app that helps you find the perfect doctor faster than you can say "Is this covered by insurance?"💉
 
 ## 🌟 What's This All About?
 
@@ -167,3 +167,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 Built with ❤️ and a lot of debugging. Happy doctor hunting!
+by - NileshAmbekarr
