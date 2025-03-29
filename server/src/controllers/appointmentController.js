@@ -82,6 +82,11 @@ const cancelAppointment = async (req, res, next) => {
     try {
       const appointmentId = req.params.id;
       
+      // Validate appointment ID
+      if (!appointmentId) {
+        return res.status(400).json({ message: 'Appointment ID is required' });
+      }
+
       // Find the appointment by its ID
       const appointment = await Appointment.findById(appointmentId);
       if (!appointment) {
@@ -130,7 +135,11 @@ const cancelAppointment = async (req, res, next) => {
       
       res.json({ message: 'Appointment cancelled successfully', appointment });
     } catch (error) {
-      next(error);
+      console.error('Error in cancelAppointment:', error);
+      res.status(500).json({ 
+        message: 'Failed to cancel appointment',
+        error: error.message 
+      });
     }
   };
 
