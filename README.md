@@ -56,6 +56,7 @@ cd server
 # Install dependencies (grab a coffee, this might take a minute)
 npm install
 
+
 # Create a .env file with your secrets (shhh, don't tell anyone)
 echo "PORT=3000
 MONGODB_URI=mongodb://localhost:27017/doctor-search
