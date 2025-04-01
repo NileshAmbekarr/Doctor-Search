@@ -12,7 +12,7 @@ Doctor Search is a super cool web application that connects patients with doctor
 - **Doctor Search**: Find doctors by specialty, location, or name. Filter results and find your perfect medical match.
 - **Doctor Profiles**: View detailed doctor information, including specialty, experience, location, and availability. Stalk them professionally before making a decision!
 - **Appointment Booking**: See when doctors are available and book appointments with a few clicks. No more endless phone calls to receptionists!
-- **Dashboards**: Separate interfaces for patients and doctors to manage appointments, profiles, and more. Everyone gets their own special space!
+- **Dashboards**: Separate interfaces for patients and doctors to manage appointments, profiles, and more. Everyone gets their own special space! 
 
 ## 🛠️ Tech Stack
 
