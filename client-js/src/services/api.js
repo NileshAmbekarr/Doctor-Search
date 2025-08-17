@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Create an axios instance with the base URL
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://doctor-search-backend.onrender.com/api';
 
 // Create axios instance
 const api = axios.create({
