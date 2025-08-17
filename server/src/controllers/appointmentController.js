@@ -1,6 +1,6 @@
 const { sendEmail } = require('../services/emailservice');
 const { loadTemplate } = require('../services/emailTamplates'); 
-const Appointment = require('../models/Appointment');
+const Appointment = require('../models/appointment');
 const DoctorProfile = require('../models/DoctorProfile');
 const User = require('../models/userModel');
 
